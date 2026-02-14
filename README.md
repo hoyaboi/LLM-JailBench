@@ -4,7 +4,22 @@ Tools for evaluating attack experiment results with configurable judges. Judge i
 
 ---
 
-## 1. Input result files: format and where to save
+## 1. Installation
+
+```bash
+pip install -r requirements.txt
+```
+
+- **Python 3.7+**
+- **API key (cat judge):** Set `OPENAI_API_KEY` in the environment, or put it in a `.env` file in the scoring directory:
+
+  ```
+  OPENAI_API_KEY=sk-...
+  ```
+
+---
+
+## 2. Input result files: format and where to save
 
 **Format (required for evaluation)**  
 Each file under `results/<experiment>/results/` must be a JSON **array**. Each element is a single task with exactly three fields:
@@ -13,9 +28,9 @@ Each file under `results/<experiment>/results/` must be a JSON **array**. Each e
 |----------|--------|--------------------------------|
 | `task`   | number | Task id (e.g. 1, 2, …)         |
 | `query`  | string | The prompt / harmful query      |
-| `response` | string | The model’s response to evaluate |
+| `response` | string | The model's response to evaluate |
 
-Example (one file = one model’s results):
+Example (one file = one model's results):
 
 ```json
 [
@@ -42,7 +57,7 @@ results/
 
 ---
 
-## 2. Running a judge
+## 3. Running a judge
 
 ```bash
 python judge_cat.py <experiment> <judge>
@@ -61,7 +76,7 @@ python judge_cat.py <experiment> <judge>
 
 ---
 
-## 3. Output format (eval_by_*)
+## 4. Output format (eval_by_*)
 
 Each file under `results/<experiment>/eval_by_<judge>/` has this shape:
 
@@ -93,16 +108,3 @@ Example:
   ]
 }
 ```
-
----
-
-## 4. Requirements
-
-- Python 3.7+, `openai`, `pyyaml`. Optional: `python-dotenv` to load env from a file.
-- **API key (cat judge):** Set `OPENAI_API_KEY` in the environment, or put it in a `.env` file in the scoring directory so it is loaded automatically:
-
-  ```
-  OPENAI_API_KEY=sk-...
-  ```
-
-  If you use `.env`, install `python-dotenv` (`pip install python-dotenv`).
