@@ -2,8 +2,6 @@
 
 Tools for evaluating attack experiment results with configurable judges. Judge implementations (e.g. `judge_cat/`) are self-contained. Multiple judges can be used in a unified way.
 
----
-
 ## 1. Installation
 
 ```bash
@@ -11,13 +9,11 @@ pip install -r requirements.txt
 ```
 
 - **Python 3.7+**
-- **API key (cat judge):** Set `OPENAI_API_KEY` in the environment, or put it in a `.env` file in the scoring directory:
+- **API key:** Set `OPENAI_API_KEY` in the environment, or put it in a `.env` file in the scoring directory:
 
   ```
   OPENAI_API_KEY=sk-...
   ```
-
----
 
 ## 2. Input result files: format and where to save
 
@@ -55,8 +51,6 @@ results/
         └── ...
 ```
 
----
-
 ## 3. Running a judge
 
 ```bash
@@ -73,8 +67,6 @@ python judge_cat.py <experiment> <judge>
 **Options:** `--judge-model` (LLM used by the judge, default `gpt-4o-mini`), `--limit N` (max tasks per file, for testing), `--workers N` (number of files to process in parallel, default 1).
 
 **Available judges:** only **cat** for now; **crescendo** is planned.
-
----
 
 ## 4. Output format (eval_by_*)
 
