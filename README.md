@@ -1,4 +1,4 @@
-# Scoring
+# Universal Jailbreak Judgement Framework
 
 Tools for evaluating attack experiment results with configurable judges. Judge implementations (e.g. `judge_cat/`) are self-contained. Multiple judges can be used in a unified way.
 
