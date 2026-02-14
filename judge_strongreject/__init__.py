@@ -1,0 +1,1 @@
+"""StrongReject judge (placeholder)."""
