@@ -1,3 +1,6 @@
 openai
 pyyaml
 python-dotenv
+# For HarmBench classifier (judge_harmbench)
+vllm>=0.3.0
+transformers

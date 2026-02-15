@@ -1,10 +1,9 @@
 """
-CLI to evaluate experiment results with a judge.
-  python judge_cat.py <experiment> <judge>
+CLI to evaluate experiment results with the cat judge.
+  python judge_cat.py <experiment>
 - Loads results/<experiment>/results/*.json (format: [{ task, query, response }, ...]).
-- Runs the given judge and saves to results/<experiment>/eval_by_<judge>/*.json
+- Runs the cat judge and saves to results/<experiment>/eval_by_cat/*.json
   (format: num_tasks, num_success, attack_success_rate, results).
-- Implemented judges: cat (crescendo etc. to be added).
 """
 import json
 import argparse
@@ -133,23 +132,14 @@ def run_judge_on_file(
     log(f"  -> {output_path} (num_tasks={num_tasks}, num_success={num_success}, rate={rate:.4f})")
 
 
-# Judge name -> implementation (register new judges here)
-AVAILABLE_JUDGES = {"cat"}  # crescendo planned
-
-
 def main():
     parser = argparse.ArgumentParser(
-        description="Load results/<experiment>/results/*.json, run judge, save to results/<experiment>/eval_by_<judge>/"
+        description="Load results/<experiment>/results/*.json, run cat judge, save to results/<experiment>/eval_by_cat/"
     )
     parser.add_argument(
         "experiment",
         type=str,
         help="Experiment (attack) name. JSONs are loaded from results/<experiment>/results/",
-    )
-    parser.add_argument(
-        "judge",
-        type=str,
-        help="Judge name. Output is saved to results/<experiment>/eval_by_<judge>/ (e.g. cat, crescendo)",
     )
     parser.add_argument(
         "--judge-model",
@@ -171,13 +161,9 @@ def main():
     )
     args = parser.parse_args()
 
-    if args.judge not in AVAILABLE_JUDGES:
-        print(f"Judge '{args.judge}' is not implemented yet. Available: {sorted(AVAILABLE_JUDGES)}")
-        sys.exit(1)
-
     scoring_dir = Path(__file__).resolve().parent
     input_dir = scoring_dir / "results" / args.experiment / "results"
-    output_dir = scoring_dir / "results" / args.experiment / f"eval_by_{args.judge}"
+    output_dir = scoring_dir / "results" / args.experiment / "eval_by_cat"
 
     if not input_dir.is_dir():
         print(f"Error: not a directory: {input_dir}")
@@ -188,7 +174,7 @@ def main():
         print(f"No .json files in {input_dir}")
         sys.exit(0)
 
-    print(f"Judge: {args.judge} (model: {args.judge_model})")
+    print(f"Judge: cat (model: {args.judge_model})")
     print(f"Input:  {input_dir}")
     print(f"Output: {output_dir}")
     print(f"Files to process: {len(json_files)}")
