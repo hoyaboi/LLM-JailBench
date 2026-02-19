@@ -182,6 +182,14 @@ def main():
         default=None,
         help="Output directory path (default: results/<experiment>/eval_by_cat/)",
     )
+    parser.add_argument(
+        "--input",
+        "-i",
+        type=str,
+        nargs="+",
+        default=None,
+        help="Specific input file(s) to process (relative to input_dir or absolute path). If not specified, all .json files are processed.",
+    )
     args = parser.parse_args()
 
     scoring_dir = Path(__file__).resolve().parent
@@ -195,9 +203,35 @@ def main():
         print(f"Error: not a directory: {input_dir}")
         sys.exit(1)
 
-    json_files = sorted(input_dir.glob("*.json"))
+    if args.input:
+        # Process only specified files
+        json_files = []
+        for input_file in args.input:
+            input_path = Path(input_file)
+            if input_path.is_absolute():
+                # Absolute path
+                if not input_path.exists():
+                    print(f"Error: file not found: {input_path}")
+                    sys.exit(1)
+                json_files.append(input_path)
+            else:
+                # Relative path - try relative to input_dir
+                relative_path = input_dir / input_path
+                if relative_path.exists():
+                    json_files.append(relative_path)
+                elif input_path.exists():
+                    # Try as relative to current directory
+                    json_files.append(input_path.resolve())
+                else:
+                    print(f"Error: file not found: {input_file}")
+                    sys.exit(1)
+        json_files = sorted(set(json_files))  # Remove duplicates and sort
+    else:
+        # Process all .json files
+        json_files = sorted(input_dir.glob("*.json"))
+    
     if not json_files:
-        print(f"No .json files in {input_dir}")
+        print(f"No files to process")
         sys.exit(0)
 
     print(f"Judge: cat (model: {args.judge_model})")
