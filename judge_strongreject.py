@@ -191,7 +191,7 @@ def main():
     scoring_dir = Path(__file__).resolve().parent
     input_dir = scoring_dir / "results" / args.experiment / "results"
     if args.output:
-        output_dir = Path(args.output).resolve()
+        output_dir = scoring_dir / "results" / args.experiment / args.output
     else:
         output_dir = scoring_dir / "results" / args.experiment / "eval_by_strongreject"
 
