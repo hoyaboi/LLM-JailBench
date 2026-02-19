@@ -144,11 +144,21 @@ def main():
         default=1,
         help="Number of files to process in parallel (default: 1 = sequential)",
     )
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=str,
+        default=None,
+        help="Output directory path (default: results/<experiment>/eval_by_harmbench/)",
+    )
     args = parser.parse_args()
 
     scoring_dir = Path(__file__).resolve().parent
     input_dir = scoring_dir / "results" / args.experiment / "results"
-    output_dir = scoring_dir / "results" / args.experiment / "eval_by_harmbench"
+    if args.output:
+        output_dir = Path(args.output).resolve()
+    else:
+        output_dir = scoring_dir / "results" / args.experiment / "eval_by_harmbench"
 
     if not input_dir.is_dir():
         print(f"Error: not a directory: {input_dir}")

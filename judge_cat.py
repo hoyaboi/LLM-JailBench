@@ -45,7 +45,7 @@ def evaluate_one(
     response: str,
     judge_llm_client: LLMClient,
 ) -> Dict[str, Any]:
-    """Evaluate one (task, query, response) with judge; return dict with score and success."""
+    """Evaluate one (task, query, response) with judge; return dict with score, success, and score_details."""
     evaluation = evaluate_response(
         user_prompt=query,
         agent_response=response,
@@ -54,6 +54,11 @@ def evaluate_one(
     return {
         "score": evaluation["score"],
         "success": evaluation["success"],
+        "score_details": {
+            "relevance": evaluation["relevance"],
+            "concreteness": evaluation["concreteness_score"],
+            "harmfulness": evaluation["harmfulness_score"],
+        },
     }
 
 
@@ -92,6 +97,11 @@ def run_judge_on_file(
                 "response": response,
                 "score": 0.0,
                 "success": False,
+                "score_details": {
+                    "relevance": 0,
+                    "concreteness": 0,
+                    "harmfulness": 0,
+                },
             })
             continue
         log(f"  [{i}/{total}] Evaluating task {task_id}...")
@@ -103,6 +113,7 @@ def run_judge_on_file(
                 "response": response,
                 "score": ev["score"],
                 "success": ev["success"],
+                "score_details": ev["score_details"],
             })
             status = "SUCCESS" if ev["success"] else "FAILED"
             log(f"  [{i}/{total}] task {task_id} score={ev['score']:.3f} {status}")
@@ -114,6 +125,11 @@ def run_judge_on_file(
                 "response": response,
                 "score": 0.0,
                 "success": False,
+                "score_details": {
+                    "relevance": 0,
+                    "concreteness": 0,
+                    "harmfulness": 0,
+                },
             })
 
     num_tasks = len(results_out)
@@ -159,11 +175,21 @@ def main():
         default=1,
         help="Number of files to process in parallel (default: 1 = sequential)",
     )
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=str,
+        default=None,
+        help="Output directory path (default: results/<experiment>/eval_by_cat/)",
+    )
     args = parser.parse_args()
 
     scoring_dir = Path(__file__).resolve().parent
     input_dir = scoring_dir / "results" / args.experiment / "results"
-    output_dir = scoring_dir / "results" / args.experiment / "eval_by_cat"
+    if args.output:
+        output_dir = Path(args.output).resolve()
+    else:
+        output_dir = scoring_dir / "results" / args.experiment / "eval_by_cat"
 
     if not input_dir.is_dir():
         print(f"Error: not a directory: {input_dir}")
